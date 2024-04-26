@@ -83,7 +83,7 @@ namespace LittlePetAPI.Controllers
 
         // POST: api/FormasPagamento
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("PagamentoTotal")]
+        [HttpPost("/PagamentoTotalVenda")]
         public async Task<ActionResult<FormaPagamento>> PostFormaPagamento(FormaPagamento formaPagamento)
         {
             if (_context.FormasPagamentos == null)
@@ -94,12 +94,12 @@ namespace LittlePetAPI.Controllers
             var venda = await _context.Vendas.Where(v => v.VendaId == formaPagamento.VendaId).FirstOrDefaultAsync();
             if (venda == null)
             {
-                return NoContent();
+                return NotFound("A venda não existe.");
             }
 
             if (venda.ValorTotalVenda > formaPagamento.PagamentoValor)
             {
-                return BadRequest("Valor de Pagamento é menor do que o Valor da Venda");
+                return BadRequest("O Valor de Pagamento é menor do que o Valor da Venda");
             }
 
             if (venda.ValorTotalVenda < formaPagamento.PagamentoValor)

@@ -52,6 +52,66 @@ namespace LittlePet.Controllers
             return agendamento;
         }
 
+        // GET: api/Agendamentos/5
+        [HttpGet("/PesquisaPor/Cliente/{cpf}")]
+        public async Task<ActionResult<IEnumerable<Cliente>>> GetAgendamentoByClientsName(string cpf)
+        {
+            if (_context.Agendamentos == null)
+            {
+                return NotFound();
+            }
+
+            var cliente = _context.Clientes.Where(c => c.CpfCliente == cpf).FirstOrDefault();
+            if (cliente == null)
+            {
+                return BadRequest("Cliente não cadastrado.");
+            }
+
+            var listaPets = _context.Pets.Where(p => p.ClienteId == cliente.ClienteId).ToList();
+            if (listaPets.Count == 0)
+            {
+                return BadRequest("Nenhum pet cadastrado para esse cliente.");
+            }
+
+            List<Agendamento> agendamentos = new List<Agendamento>();
+
+            foreach (var pet in listaPets)
+            {
+                Agendamento agenda = (Agendamento)_context.Agendamentos.Where(a => a.PetId == pet.PetId);
+                if (agenda != null)
+                {
+                    agendamentos.Add(agenda);
+                }
+            }
+
+            if (agendamentos == null)
+            {
+                return NotFound("Não foi encontrado nenhum agendamento para esse cliente.");
+            }
+
+            return Ok(agendamentos);
+        }
+
+        // GET: api/Agendamentos/data
+        [HttpGet("/PesquisaPor/Data/{date}")]
+        public async Task<ActionResult<IEnumerable<Cliente>>> GetAgendamentoByDateTime(DateTime date)
+        {
+            if (_context.Agendamentos == null)
+            {
+                return NotFound();
+            }
+
+            var agendamentos = await _context.Agendamentos.Where(a => a.DiaHoraAgendamento == date).ToListAsync();
+
+            if (agendamentos == null)
+            {
+                return NotFound("Não existe nenhum agendamento para esse dia/horário.");
+            }
+
+            return Ok(agendamentos);
+        }
+
+
         // PUT: api/Agendamentos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -93,7 +153,7 @@ namespace LittlePet.Controllers
                 return NotFound();
             }
 
-            if (agendamento.DiaHoraAgendamento <= DateTime.Now || agendamento.DiaHoraAgendamento != null)
+            if (agendamento.DiaHoraAgendamento <= DateTime.Now)
             {
                 return BadRequest("Não é possível agendar um serviço para esse dia/horário.");
             }

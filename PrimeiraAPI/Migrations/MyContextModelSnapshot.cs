@@ -93,6 +93,9 @@ namespace LittlePetAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("NascimentoCliente")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("NomeCliente")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -104,7 +107,57 @@ namespace LittlePetAPI.Migrations
 
                     b.HasKey("ClienteId");
 
-                    b.ToTable("Cliente", (string)null);
+                    b.ToTable("Clientes", (string)null);
+                });
+
+            modelBuilder.Entity("LittlePetAPI.Models.Compra", b =>
+                {
+                    b.Property<int>("CompraId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompraId"));
+
+                    b.Property<DateTime>("DataChegada")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FornecedorId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("ValorTotalCompra")
+                        .HasColumnType("float");
+
+                    b.HasKey("CompraId");
+
+                    b.HasIndex("FornecedorId");
+
+                    b.ToTable("Compras", (string)null);
+                });
+
+            modelBuilder.Entity("LittlePetAPI.Models.CompraProduto", b =>
+                {
+                    b.Property<int>("CompraProdutoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompraProdutoId"));
+
+                    b.Property<int>("CompraId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("QuantidadeProdutoCompra")
+                        .HasColumnType("float");
+
+                    b.HasKey("CompraProdutoId");
+
+                    b.HasIndex("CompraId");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("ComprasProdutos", (string)null);
                 });
 
             modelBuilder.Entity("LittlePetAPI.Models.FormaPagamento", b =>
@@ -208,9 +261,6 @@ namespace LittlePetAPI.Migrations
                     b.Property<int>("AnimalProdutoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FornecedorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("NomeProduto")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -233,8 +283,6 @@ namespace LittlePetAPI.Migrations
                     b.HasKey("ProdutoId");
 
                     b.HasIndex("AnimalProdutoId");
-
-                    b.HasIndex("FornecedorId");
 
                     b.HasIndex("TipoProdutoId");
 
@@ -546,6 +594,36 @@ namespace LittlePetAPI.Migrations
                     b.Navigation("Servico");
                 });
 
+            modelBuilder.Entity("LittlePetAPI.Models.Compra", b =>
+                {
+                    b.HasOne("LittlePetAPI.Models.Fornecedor", "Fornecedor")
+                        .WithMany()
+                        .HasForeignKey("FornecedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fornecedor");
+                });
+
+            modelBuilder.Entity("LittlePetAPI.Models.CompraProduto", b =>
+                {
+                    b.HasOne("LittlePetAPI.Models.Compra", "Compra")
+                        .WithMany()
+                        .HasForeignKey("CompraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LittlePetAPI.Models.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Compra");
+
+                    b.Navigation("Produto");
+                });
+
             modelBuilder.Entity("LittlePetAPI.Models.FormaPagamento", b =>
                 {
                     b.HasOne("LittlePetAPI.Models.Venda", "Venda")
@@ -576,12 +654,6 @@ namespace LittlePetAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LittlePetAPI.Models.Fornecedor", "Fornecedor")
-                        .WithMany()
-                        .HasForeignKey("FornecedorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("LittlePetAPI.Models.TipoProduto", "TipoProduto")
                         .WithMany()
                         .HasForeignKey("TipoProdutoId")
@@ -589,8 +661,6 @@ namespace LittlePetAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("AnimalProduto");
-
-                    b.Navigation("Fornecedor");
 
                     b.Navigation("TipoProduto");
                 });

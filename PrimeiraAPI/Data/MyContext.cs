@@ -20,11 +20,13 @@ namespace LittlePetAPI.Data
         public DbSet<AnimalProduto> AnimalProdutos { get; set; }
         public DbSet<FormaPagamento> FormasPagamentos { get; set; }
         public DbSet<Agendamento> Agendamentos { get; set; }
+        public DbSet<Compra> Compras { get; set; }
+        public DbSet<CompraProduto> ComprasProdutos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Cliente>().ToTable("Cliente");
+            modelBuilder.Entity<Cliente>().ToTable("Clientes");
             modelBuilder.Entity<Pet>().ToTable("Pets");
             modelBuilder.Entity<Venda>().ToTable("Vendas");
             modelBuilder.Entity<Produto>().ToTable("Produtos");
@@ -35,6 +37,8 @@ namespace LittlePetAPI.Data
             modelBuilder.Entity<AnimalProduto>().ToTable("AnimalProdutos");
             modelBuilder.Entity<FormaPagamento>().ToTable("FormasPagamentos");
             modelBuilder.Entity<Agendamento>().ToTable("Agendamentos");
-        }
+            modelBuilder.Entity<Compra>().ToTable("Compras");
+            modelBuilder.Entity<CompraProduto>().ToTable("ComprasProdutos");
+        }      
     }
 }

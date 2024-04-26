@@ -20,7 +20,6 @@ namespace LittlePetAPI.Models
         public double? PagamentoTroco { get; set; } = 0;
 
         public int VendaId { get; set; }
-
         public Venda? Venda { get; set; }
 
     }

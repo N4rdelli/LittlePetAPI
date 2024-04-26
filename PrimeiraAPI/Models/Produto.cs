@@ -33,7 +33,7 @@ namespace LittlePetAPI.Models
         public int AnimalProdutoId { get; set; }
         public AnimalProduto? AnimalProduto { get; set; }
 
-        public int FornecedorId { get; set; }
-        public Fornecedor? Fornecedor { get; set; }
+        //public int FornecedorId { get; set; }
+        //public Fornecedor? Fornecedor { get; set; }
     }
 }

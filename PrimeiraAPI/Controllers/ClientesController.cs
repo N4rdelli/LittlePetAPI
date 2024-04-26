@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LittlePetAPI.Data;
 using LittlePetAPI.Models;
+using System.Drawing;
 
 namespace LittlePet.Controllers
 {
@@ -103,7 +104,7 @@ namespace LittlePet.Controllers
 
         // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("EmailCpf{id}")]
+        [HttpPost("EmailCpf")]
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
             if (_context.Clientes == null)
@@ -119,6 +120,18 @@ namespace LittlePet.Controllers
             if (cliente.CpfCliente == null)
             {
                 return BadRequest("Esse cliente já está cadastrado!");
+            }
+            
+            var hoje =  DateTime.Now;
+
+            var idadeCliente = hoje.Year - cliente.NascimentoCliente.Year;
+
+            if (hoje.Month < cliente.NascimentoCliente.Month && hoje.Day < cliente.NascimentoCliente.Day)
+                idadeCliente--;
+               
+            if (idadeCliente <= 14)
+            {
+                return BadRequest("O cliente não tem idade suficiente para se cadastrar");
             }
 
             _context.Clientes.Add(cliente);

@@ -17,29 +17,8 @@ namespace LittlePetAPI.Models
         [StringLength(11, MinimumLength = 11, ErrorMessage = "O CPF do Cliente deve ter 11 dígitos")]
         public string CpfCliente { get; set; }
 
-        /*[Required(ErrorMessage = "O campo CEP é obrigatório!")]
-        [Display(Name = "CEP")]
-        [StringLength(7, MinimumLength = 7, ErrorMessage = "O CEP do Cliente deve ter 7 dígitos")]
-        public string CepCliente { get; set; }
-
-        [Required(ErrorMessage = "O campo Cidade é obrigatório!")]
-        [Display(Name = "Cidade")]
-        public string CidadeEnderecoCliente { get; set; }
-
-        [Required(ErrorMessage = "O campo Bairro é obrigatório!")]
-        [Display(Name = "Bairro")]
-        public string BairroEnderecoCliente { get; set; }
-
-        [Required(ErrorMessage = "O campo Rua é obrigatório!")]
-        [Display(Name = "Rua")]
-        public string RuaEnderecoCliente { get; set; }
-
-        [Display(Name = "Número")]
-        [StringLength(4, ErrorMessage = "Sua casa não possui 5 números, ao menos nunca vi!")]
-        public int NumeroEnderecoCliente { get; set; }
-
-        [Display(Name = "Complemento")]
-        public string? ComplementoEnderecoCliente { get; set; }*/
+        [Required(ErrorMessage = "A Data de Nascimento do Cliente é obrigatório.")]
+        public DateTime NascimentoCliente { get; set; }
 
         [Required(ErrorMessage = "O Celular do Cliente é obrigatório!")]
         [Display(Name = "Celular")]

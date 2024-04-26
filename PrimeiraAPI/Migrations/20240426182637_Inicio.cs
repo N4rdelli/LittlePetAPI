@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LittlePetAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class inicial : Migration
+    public partial class Inicio : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,20 +64,21 @@ namespace LittlePetAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cliente",
+                name: "Clientes",
                 columns: table => new
                 {
                     ClienteId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NomeCliente = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CpfCliente = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    NascimentoCliente = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CelularCliente = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmailCliente = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SenhaCliente = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cliente", x => x.ClienteId);
+                    table.PrimaryKey("PK_Clientes", x => x.ClienteId);
                 });
 
             migrationBuilder.CreateTable(
@@ -244,9 +245,9 @@ namespace LittlePetAPI.Migrations
                 {
                     table.PrimaryKey("PK_Pets", x => x.PetId);
                     table.ForeignKey(
-                        name: "FK_Pets_Cliente_ClienteId",
+                        name: "FK_Pets_Clientes_ClienteId",
                         column: x => x.ClienteId,
-                        principalTable: "Cliente",
+                        principalTable: "Clientes",
                         principalColumn: "ClienteId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -265,10 +266,31 @@ namespace LittlePetAPI.Migrations
                 {
                     table.PrimaryKey("PK_Vendas", x => x.VendaId);
                     table.ForeignKey(
-                        name: "FK_Vendas_Cliente_ClienteId",
+                        name: "FK_Vendas_Clientes_ClienteId",
                         column: x => x.ClienteId,
-                        principalTable: "Cliente",
+                        principalTable: "Clientes",
                         principalColumn: "ClienteId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Compras",
+                columns: table => new
+                {
+                    CompraId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DataChegada = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ValorTotalCompra = table.Column<double>(type: "float", nullable: true),
+                    FornecedorId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Compras", x => x.CompraId);
+                    table.ForeignKey(
+                        name: "FK_Compras_Fornecedores_FornecedorId",
+                        column: x => x.FornecedorId,
+                        principalTable: "Fornecedores",
+                        principalColumn: "FornecedorId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -283,8 +305,7 @@ namespace LittlePetAPI.Migrations
                     PrecoProduto = table.Column<double>(type: "float", nullable: false),
                     QuantidadeProduto = table.Column<double>(type: "float", nullable: false),
                     TipoProdutoId = table.Column<int>(type: "int", nullable: false),
-                    AnimalProdutoId = table.Column<int>(type: "int", nullable: false),
-                    FornecedorId = table.Column<int>(type: "int", nullable: false)
+                    AnimalProdutoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -294,12 +315,6 @@ namespace LittlePetAPI.Migrations
                         column: x => x.AnimalProdutoId,
                         principalTable: "AnimalProdutos",
                         principalColumn: "AnimalProdutoId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Produtos_Fornecedores_FornecedorId",
-                        column: x => x.FornecedorId,
-                        principalTable: "Fornecedores",
-                        principalColumn: "FornecedorId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Produtos_TiposProdutos_TipoProdutoId",
@@ -357,6 +372,33 @@ namespace LittlePetAPI.Migrations
                         column: x => x.VendaId,
                         principalTable: "Vendas",
                         principalColumn: "VendaId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComprasProdutos",
+                columns: table => new
+                {
+                    CompraProdutoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompraId = table.Column<int>(type: "int", nullable: false),
+                    ProdutoId = table.Column<int>(type: "int", nullable: false),
+                    QuantidadeProdutoCompra = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComprasProdutos", x => x.CompraProdutoId);
+                    table.ForeignKey(
+                        name: "FK_ComprasProdutos_Compras_CompraId",
+                        column: x => x.CompraId,
+                        principalTable: "Compras",
+                        principalColumn: "CompraId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComprasProdutos_Produtos_ProdutoId",
+                        column: x => x.ProdutoId,
+                        principalTable: "Produtos",
+                        principalColumn: "ProdutoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -437,6 +479,21 @@ namespace LittlePetAPI.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Compras_FornecedorId",
+                table: "Compras",
+                column: "FornecedorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComprasProdutos_CompraId",
+                table: "ComprasProdutos",
+                column: "CompraId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComprasProdutos_ProdutoId",
+                table: "ComprasProdutos",
+                column: "ProdutoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FormasPagamentos_VendaId",
                 table: "FormasPagamentos",
                 column: "VendaId");
@@ -450,11 +507,6 @@ namespace LittlePetAPI.Migrations
                 name: "IX_Produtos_AnimalProdutoId",
                 table: "Produtos",
                 column: "AnimalProdutoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Produtos_FornecedorId",
-                table: "Produtos",
-                column: "FornecedorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Produtos_TipoProdutoId",
@@ -499,6 +551,9 @@ namespace LittlePetAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ComprasProdutos");
+
+            migrationBuilder.DropTable(
                 name: "FormasPagamentos");
 
             migrationBuilder.DropTable(
@@ -517,22 +572,25 @@ namespace LittlePetAPI.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "Compras");
+
+            migrationBuilder.DropTable(
                 name: "Produtos");
 
             migrationBuilder.DropTable(
                 name: "Vendas");
 
             migrationBuilder.DropTable(
-                name: "AnimalProdutos");
+                name: "Fornecedores");
 
             migrationBuilder.DropTable(
-                name: "Fornecedores");
+                name: "AnimalProdutos");
 
             migrationBuilder.DropTable(
                 name: "TiposProdutos");
 
             migrationBuilder.DropTable(
-                name: "Cliente");
+                name: "Clientes");
         }
     }
 }

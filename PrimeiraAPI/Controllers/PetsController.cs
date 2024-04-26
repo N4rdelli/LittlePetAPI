@@ -116,8 +116,6 @@ namespace LittlePet.Controllers
                 return BadRequest("Seu pet não nasceu ainda!");
             }
 
-
-
             _context.Pets.Add(pet);
             await _context.SaveChangesAsync();
 
